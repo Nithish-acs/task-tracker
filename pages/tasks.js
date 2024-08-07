@@ -1,8 +1,8 @@
-// pages/tasks.js
-import withAuth from '../withAuth';
+// // pages/tasks.js
+// import withAuth from '../src/lib/withAuth';
 
-function Tasks() {
-  return <div>Protected Tasks Page</div>;
-}
+// function Tasks() {
+//   return <div>Protected Tasks Page</div>;
+// }
 
-export default withAuth(Tasks);
+// export default withAuth(Tasks);
