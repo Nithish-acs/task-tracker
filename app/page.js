@@ -1,9 +1,8 @@
-"use client"
+"use client";
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faEllipsisH, faArrowDown, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
-import { XCircleIcon } from '@heroicons/react/solid';
 import withAuth from '../src/lib/withAuth';
 import { database } from '@/src/lib/appwrite';
 
@@ -13,23 +12,31 @@ function Home() {
   const [isEdit, setIsEdit] = useState(false);
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [usersList, setUsersList] = useState([]);
 
-  const getTaskList = () => {
+  const getUserList = async () => {
     try {
-      database.listDocuments('66b31bef0026c155d454', '66b31bf7001daf18fd22')
-        .then(response => {
-          setTasks(response.documents);
-          console.log('Documents:', response);
-        }, error => {
-          console.error('Error listing documents:', error);
-        });
+      const response = await database.listDocuments('66b31bef0026c155d454', '66b36c41003881f1a29d');
+      setUsersList(response.documents);
+      console.log('Users:', response);
     } catch (error) {
-      console.error('Unexpected error:', error);
+      console.error('Error listing users:', error);
+    }
+  };
+
+  const getTaskList = async () => {
+    try {
+      const response = await database.listDocuments('66b31bef0026c155d454', '66b31bf7001daf18fd22');
+      setTasks(response.documents);
+      console.log('Documents:', response);
+    } catch (error) {
+      console.error('Error listing documents:', error);
     }
   };
 
   useEffect(() => {
     getTaskList();
+    getUserList();
   }, []);
 
   const router = useRouter();
@@ -47,14 +54,12 @@ function Home() {
   };
 
   const navigateToCreateTask = () => {
-    router.push('/createTask')
-  }
+    router.push('/createTask');
+  };
 
   const handleLogout = () => {
-    router.push('/logout')
-  }
-
- 
+    router.push('/logout');
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,13 +67,9 @@ function Home() {
   };
 
   const handleSave = () => {
-    console.log("testing", isEdit);
-
-    setTasks(tasks.map((task) => {
-      console.log(task)
+    setTasks(tasks.map(task => (
       task.$id === modalContent.$id ? { ...task, ...modalContent } : task
-    }));
-
+    )));
     closeModal();
   };
 
@@ -143,11 +144,8 @@ function Home() {
       ));
   };
 
-  // const assignees = [...new Set(tasks.map(task => task.assignee))];
-
   return (
     <div className="container mx-auto p-4">
-
       <div className="mb-4 flex space-x-4">
         <button
           className={`px-4 py-2 rounded ${selectedAssignee === '' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
@@ -155,15 +153,15 @@ function Home() {
         >
           All
         </button>
-        {/* {assignees.map(assignee => (
+        {usersList.map(user => (
           <button
-            key={assignee}
-            className={`px-4 py-2 rounded ${selectedAssignee === assignee ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedAssignee(assignee)}
+            key={user.$id}
+            className={`px-4 py-2 rounded ${selectedAssignee === user.name ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            onClick={() => setSelectedAssignee(user.name)}
           >
-            {assignee}
+            {user.name}
           </button>
-        ))} */}
+        ))}
       </div>
 
       <div className="mb-6">

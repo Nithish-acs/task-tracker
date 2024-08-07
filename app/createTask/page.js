@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { account, database } from '../../src/lib/appwrite';
 import { ID } from 'appwrite';
 import withAuth from '../../src/lib/withAuth';
@@ -7,14 +7,16 @@ import { useRouter } from 'next/navigation';
 
 function CreateTask() {
 
-    const router = useRouter()
+  const router = useRouter()
 
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [assignee, setAssignee] = useState('');
+  const [assigneeList, setAssigneeList] = useState('');
   const [storyPoints, setStoryPoints] = useState('');
   const [priority, setPriority] = useState('');
   const [reported, setReported] = useState('');
+  const [,] = useState('');
   const [tags, setTags] = useState([]);
   const [message, setMessage] = useState('');
 
@@ -22,8 +24,21 @@ function CreateTask() {
   const priorities = ["Low", "Medium", "High"]; // Example priorities
   const availableTags = ["Bug", "Feature", "Improvement", "Task"]; // Example tags
 
+  const getUserList = async () => {
+    try {
+      const response = await database.listDocuments('66b31bef0026c155d454', '66b36c41003881f1a29d');
+      setAssigneeList(response.documents);
+    } catch (error) {
+      console.error('Error listing users:', error);
+    }
+  };
+  useEffect(() => {
+    getUserList()
+  }, []);
+
+
   const handleTagsChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    const selectedOptions = e.target.value
     setTags(selectedOptions);
   };
 
@@ -66,7 +81,7 @@ function CreateTask() {
             onChange={handleTagsChange}
             className="w-full p-3 border border-gray-300 rounded-md text-gray-800"
           >
-            <option value="" disabled>Select assignee</option>
+            <option value="" disabled>Select Tags</option>
             {availableTags.map((tag) => (
               <option key={tag} value={tag}>
                 {tag}
@@ -105,12 +120,14 @@ function CreateTask() {
             required
             className="w-full p-3 border border-gray-300 rounded-md text-gray-800"
           >
+
             <option value="" disabled>Select assignee</option>
-            {assignees.map((assignee) => (
-              <option key={assignee} value={assignee}>
-                {assignee}
-              </option>
-            ))}
+            {assigneeList !== "" &&
+              assigneeList.map((assignee) => (
+                <option key={assignee.name} value={assignee.name}>
+                  {assignee.name}
+                </option>
+              ))}
           </select>
         </div>
         <div className="mb-4">
