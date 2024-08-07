@@ -1,4 +1,4 @@
-import { Client, Users } from 'appwrite';
+import { Client, Users, ID } from 'appwrite';
 
 const client = new Client();
 
@@ -11,7 +11,7 @@ const users = new Users(client);
 
 // Create a new user
 users.create(
-    'unique()',              // Generate a unique ID for the user
+    ID.unique(),              // Generate a unique ID for the user
     'user@example.com',      // User email
     'password',              // User password
     'User Name'              // User name

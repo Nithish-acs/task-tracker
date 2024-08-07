@@ -3,8 +3,12 @@ import { useState } from 'react';
 import { account, database } from '../../src/lib/appwrite';
 import { ID } from 'appwrite';
 import withAuth from '../../src/lib/withAuth';
-import Appwrite from 'appwrite';
+import { useRouter } from 'next/navigation';
+
 function CreateTask() {
+
+    const router = useRouter()
+
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [assignee, setAssignee] = useState('');
@@ -42,7 +46,7 @@ function CreateTask() {
         ID.unique(),
         data,
       );
-      alert('Task created successfully');
+      router.push('/')
     } catch (error) {
       alert('Error creating task' + error);
       console.error(error);
