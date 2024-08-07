@@ -1,8 +1,9 @@
 "use client";
 import { useState } from 'react';
 import { account, database } from '../../src/lib/appwrite';
+import { ID } from 'appwrite';
 import withAuth from '../../src/lib/withAuth';
-
+import Appwrite from 'appwrite';
 function CreateTask() {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
@@ -24,22 +25,22 @@ function CreateTask() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    var data = {
+    let data = {
       'task_name': taskName,
       'description': description,
       'assignee': assignee,
       'story_points': parseInt(storyPoints),
       'priority': priority,
       'reporter': reported,
-      'tag': "66b3563d001dbf2a9471",
+      // 'tag': "66b3563d001dbf2a9471",
     }
-    e.preventDefault();
+
     try {
       database.createDocument(
         '66b31bef0026c155d454', // Replace with your database ID
         '66b31bf7001daf18fd22', // Replace with your collection ID
-        // ID.unique(), // Use unique() for automatic ID generation
-        data
+        ID.unique(),
+        data,
       );
       alert('Task created successfully');
     } catch (error) {
