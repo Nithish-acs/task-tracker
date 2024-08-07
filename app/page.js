@@ -13,6 +13,7 @@ function Home() {
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [tasks, setTasks] = useState([]);
   const [usersList, setUsersList] = useState([]);
+  const [statusOptions] = useState(['ToDo', 'InProgress', 'Done']); // Status options
 
   const getUserList = async () => {
     try {
@@ -70,6 +71,17 @@ function Home() {
     setTasks(tasks.map(task => (
       task.$id === modalContent.$id ? { ...task, ...modalContent } : task
     )));
+    var updateData = {
+      task_name: modalContent.task_name,
+      description: modalContent.description,
+      assignee: modalContent.assignee,
+      story_points: modalContent.story_points,
+      priority: modalContent.priority,
+      reporter: modalContent.reporter,
+      tag: modalContent.tag,
+      status: modalContent.status,
+    };
+    database.updateDocument('66b31bef0026c155d454', '66b31bf7001daf18fd22', modalContent.$id, updateData);
     closeModal();
   };
 
@@ -202,29 +214,98 @@ function Home() {
             style={{ width: '80%', maxWidth: '800px', height: '80vh', maxHeight: '90vh' }}
           >
             <div className="flex-1 p-8 overflow-auto">
-              <div className="grid grid-cols-[2fr_1fr] gap-8 border border-gray-300 rounded-lg h-full">
-                {/* First Column */}
-                <div className="space-y-4 border-r border-gray-300 pr-8 flex flex-col">
-                  <div className="space-y-4 border-b border-gray-300 pb-4">
-                    <h3 className="text-2xl font-medium leading-6 text-gray-900">{modalContent.title}</h3>
-                    <div className="space-y-2">
-                      <p className="text-lg text-gray-700 font-semibold">Description:</p>
-                      <p className="text-lg text-gray-700">{modalContent.description}</p>
-                    </div>
+              <h3 className="text-2xl font-medium leading-6 text-gray-900">{isEdit ? 'Edit Task' : 'Task Details'}</h3>
+              <div className="mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <label className="block">
+                      <span className="text-gray-700">Task Name</span>
+                      <input
+                        type="text"
+                        name="task_name"
+                        value={modalContent.task_name || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-gray-700">Status</span>
+                      <select
+                        name="status"
+                        value={modalContent.status || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                      >
+                        <option value="">Select Status</option>
+                        {statusOptions.map(status => (
+                          <option key={status} value={status}>{status}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-gray-700">Description</span>
+                      <textarea
+                        name="description"
+                        value={modalContent.description || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        rows="4"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-gray-700">Story Points</span>
+                      <input
+                        type="number"
+                        name="story_points"
+                        value={modalContent.story_points || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-gray-700">Priority</span>
+                      <select
+                        name="priority"
+                        value={modalContent.priority || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                      >
+                        <option value="">Select Priority</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-gray-700">Assignee</span>
+                      <select
+                        name="assignee"
+                        value={modalContent.assignee || ''}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                      >
+                        <option value="">Select Assignee</option>
+                        {usersList.map(user => (
+                          <option key={user.$id} value={user.name}>{user.name}</option>
+                        ))}
+                      </select>
+                    </label>
+
                   </div>
                 </div>
-
-                {/* Second Column */}
-                <div className="space-y-4 pl-8">
-                  <p className="text-lg text-gray-700">
-                    <strong>Assignee:</strong> {modalContent.assignee}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <strong>Priority:</strong> {modalContent.priority}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <strong>Story Points:</strong> {modalContent.storyPoints}
-                  </p>
+                <div className="mt-6 flex justify-end space-x-4">
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out"
+                    onClick={handleSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300 ease-in-out"
+                    onClick={closeModal}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
