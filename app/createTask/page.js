@@ -38,7 +38,7 @@ function CreateTask() {
       database.createDocument(
         '66b31bef0026c155d454', // Replace with your database ID
         '66b31bf7001daf18fd22', // Replace with your collection ID
-        'unique()', // Use unique() for automatic ID generation
+        // ID.unique(), // Use unique() for automatic ID generation
         data
       );
       alert('Task created successfully');
