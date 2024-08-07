@@ -32,7 +32,7 @@ function CreateTask() {
       'story_points': parseInt(storyPoints),
       'priority': priority,
       'reporter': reported,
-      // 'tag': "66b3563d001dbf2a9471",
+      'tag': tags,
     }
 
     try {
