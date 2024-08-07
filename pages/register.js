@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { account } from '../src/lib/appwrite';
 import { useRouter } from 'next/router';
 import { ID } from 'appwrite';
+import { database } from '../src/lib/appwrite';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -12,11 +13,21 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await account.create(ID.unique(), email, password, name);
+      const id = ID.unique();
+      await account.create(id, email, password, name);
+      const data = {
+        'email': email,
+        'name': name,
+      }
+      await database.createDocument(
+        '66b31bef0026c155d454', // Replace with your database ID
+        '66b36c41003881f1a29d', // Replace with your collection ID
+        id,
+        data,
+      );
       router.push('/login');
     } catch (error) {
       console.error(error);
-      alert('Error registering');
     }
   };
 
