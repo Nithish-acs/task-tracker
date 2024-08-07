@@ -1,10 +1,9 @@
-
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router'; // Fix import
 import { account } from './appwrite';
 
 const withAuth = (WrappedComponent) => {
-    return (props) => {
+    const AuthWrapper = (props) => {
         const [loading, setLoading] = useState(true);
         const [authenticated, setAuthenticated] = useState(false);
         const router = useRouter();
@@ -14,7 +13,7 @@ const withAuth = (WrappedComponent) => {
                 try {
                     await account.getSession('current');
                     setAuthenticated(true);
-                } catch {
+                } catch (error) {
                     setAuthenticated(false);
                     router.push('/login');
                 } finally {
@@ -25,10 +24,23 @@ const withAuth = (WrappedComponent) => {
             checkAuth();
         }, [router]);
 
-        if (loading) return <p>Loading...</p>;
+        if (loading) {
+            return <p>Loading...</p>; // Render loading state
+        }
 
-        return authenticated ? <WrappedComponent {...props} /> : null;
+        if (!authenticated) {
+            return null; // Render nothing if not authenticated
+        }
+
+        return <WrappedComponent {...props} />;
     };
-};
+
+    AuthWrapper.displayName = `withAuth(${getDisplayName(WrappedComponent)})`;
+
+    return AuthWrapper;
+
+function getDisplayName(WrappedComponent) {
+    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}};
 
 export default withAuth;
