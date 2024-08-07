@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'; // Fix import
+import { useRouter } from 'next/navigation'; // Fix import
 import { account } from './appwrite';
 
 const withAuth = (WrappedComponent) => {
