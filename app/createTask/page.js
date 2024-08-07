@@ -27,7 +27,7 @@ function CreateTask() {
   const assignees = ["Alice", "Bob", "Charlie"];
   const priorities = ["Low", "Medium", "High"];
   const availableTags = ["Bug", "Feature", "Improvement", "Task"];
-  const statuses = ["To Do", "In Progress", "Done"]; // Example statuses
+  const statuses = ["ToDo", "InProgress", "Done"]; // Example statuses
 
   const getUserList = async () => {
     try {
@@ -42,7 +42,7 @@ function CreateTask() {
   }, []);
 
   const handleTagsChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    const selectedOptions = e.target.value;
     setTags(selectedOptions);
   };
 
@@ -132,7 +132,6 @@ function CreateTask() {
             <label htmlFor="tags" className="block text-gray-600 font-medium mb-2">Tags:</label>
             <select
               id="tags"
-              multiple
               value={tags}
               onChange={handleTagsChange}
               className="w-full p-3 border border-gray-300 rounded-md text-gray-800"
@@ -235,7 +234,7 @@ function CreateTask() {
             >
               <option value="" disabled>Select status</option>
               {statuses.map((status) => (
-                <option key={status} value={status.toLowerCase()}>
+                <option key={status} value={status}>
                   {status}
                 </option>
               ))}
