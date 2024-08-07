@@ -12,15 +12,17 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await account.createEmailPasswordSession(email, password);
-      router.push('/board');
+      let session = await account.createEmailPasswordSession(email, password);
+      console.log(session);
+
+      router.push('/');
     } catch (error) {
       console.error(error);
       alert('Error logging in');
     }
   };
 
-  const signUpNavigate = ()=>{
+  const signUpNavigate = () => {
     router.push('/register');
   }
   return (
@@ -54,7 +56,7 @@ export default function Login() {
               className="w-full p-3 border border-gray-300 rounded-md text-gray-800"
             />
           </div>
-          <span onClick={signUpNavigate}  className="cursor-pointer text-blue-600 hover:text-blue-800 underline">New User</span>
+          <span onClick={signUpNavigate} className="cursor-pointer text-blue-600 hover:text-blue-800 underline">New User</span>
           <button
             type="submit"
             className="bg-blue-600 text-white rounded-md px-4 py-2 font-medium w-full hover:bg-blue-700 transition duration-300"
