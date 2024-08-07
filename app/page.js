@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faEllipsisH, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
-import { XCircleIcon } from '@heroicons/react/solid'; 
+import { XCircleIcon } from '@heroicons/react/solid';
+import withAuth from '../src/lib/withAuth';
 
-export default function Home() {
+function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const router = useRouter();
@@ -28,8 +29,12 @@ export default function Home() {
     setIsOpen(false);
   };
 
-  const navigateToCreateTask = ()=>{
+  const navigateToCreateTask = () => {
     router.push('/createTask')
+  }
+
+  const handleLogout = () => {
+    router.push('/logout')
   }
 
   const renderTasks = (status) => {
@@ -70,13 +75,19 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-    {/* Add Task Button */}
-    <div className="mb-6">
+      {/* Add Task Button */}
+      <div className="mb-6 flex justify-between items-center">
         <button
           className="bg-gradient-to-r from-teal-400 to-teal-600 text-white py-2 px-6 rounded-lg shadow-xl hover:from-teal-500 hover:to-teal-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-500"
           onClick={navigateToCreateTask}
         >
           Add Task
+        </button>
+        <button
+          className="bg-red-500 text-white py-2 px-6 rounded-lg shadow-xl hover:bg-red-600 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500"
+          onClick={handleLogout}
+        >
+          Logout
         </button>
       </div>
 
@@ -97,43 +108,45 @@ export default function Home() {
       </div>
 
       {isOpen && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="fixed inset-0 bg-black opacity-50" onClick={closeModal}></div>
-    <div
-      className="bg-white rounded-lg shadow-lg z-50 flex flex-col"
-      style={{ width: '80%', maxWidth: '800px', height: '80vh', maxHeight: '90vh' }}
-    >
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="grid grid-cols-[2fr_1fr] gap-8 border border-gray-300 rounded-lg h-full">
-          {/* First Column */}
-          <div className="space-y-4 border-r border-gray-300 pr-8 flex flex-col">
-            <div className="space-y-4 border-b border-gray-300 pb-4">
-              <h3 className="text-2xl font-medium leading-6 text-gray-900">{modalContent.title}</h3>
-              <div className="space-y-2">
-                <p className="text-lg text-gray-700 font-semibold">Description:</p>
-                <p className="text-lg text-gray-700">{modalContent.description}</p>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black opacity-50" onClick={closeModal}></div>
+          <div
+            className="bg-white rounded-lg shadow-lg z-50 flex flex-col"
+            style={{ width: '80%', maxWidth: '800px', height: '80vh', maxHeight: '90vh' }}
+          >
+            <div className="flex-1 p-8 overflow-auto">
+              <div className="grid grid-cols-[2fr_1fr] gap-8 border border-gray-300 rounded-lg h-full">
+                {/* First Column */}
+                <div className="space-y-4 border-r border-gray-300 pr-8 flex flex-col">
+                  <div className="space-y-4 border-b border-gray-300 pb-4">
+                    <h3 className="text-2xl font-medium leading-6 text-gray-900">{modalContent.title}</h3>
+                    <div className="space-y-2">
+                      <p className="text-lg text-gray-700 font-semibold">Description:</p>
+                      <p className="text-lg text-gray-700">{modalContent.description}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Column */}
+                <div className="space-y-4 pl-8">
+                  <p className="text-lg text-gray-700">
+                    <strong>Assignee:</strong> {modalContent.assignee}
+                  </p>
+                  <p className="text-lg text-gray-700">
+                    <strong>Priority:</strong> {modalContent.priority}
+                  </p>
+                  <p className="text-lg text-gray-700">
+                    <strong>Story Points:</strong> {modalContent.storyPoints}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-          
-          {/* Second Column */}
-          <div className="space-y-4 pl-8">
-            <p className="text-lg text-gray-700">
-              <strong>Assignee:</strong> {modalContent.assignee}
-            </p>
-            <p className="text-lg text-gray-700">
-              <strong>Priority:</strong> {modalContent.priority}
-            </p>
-            <p className="text-lg text-gray-700">
-              <strong>Story Points:</strong> {modalContent.storyPoints}
-            </p>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 
 }
+
+export default withAuth(Home);
